@@ -1,0 +1,31 @@
+# IDEs
+.idea
+
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+sdist/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Translations
+*.mo
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# Environments
+.env
+venv/

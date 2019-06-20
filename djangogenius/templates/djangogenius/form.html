@@ -1,0 +1,27 @@
+<script type="text/javascript" src="https://ecommerce.merchantware.net/v1/CayanCheckoutPlus.js"></script>
+
+<form method="post" id="paymentForm">
+    <div>
+        <span id="error_message"></span>
+    </div>
+    <div>
+        <label for="formcardnumber">Card Number</label>
+        <input type="text" size="20" name="formcardnumber" data-cayan="cardnumber">
+    </div>
+    <div>
+        <label for="formcvv">CVV</label>
+        <input type="text" size="4" name="formcvv" data-cayan="cvv">
+    </div>
+    <div>
+        <label for="formexpiremonth">Expiration Month</label>
+        <input type="text" size="2" name="formexpiremonth" data-cayan="expirationmonth" title="MM">
+    </div>
+    <div>
+        <label for="form-expireyear">Expiration Year</label>
+        <input type="text" size="2" name="formexpireyear" data-cayan="expirationyear" title="YY">
+    </div>
+    <div>
+        <input type="hidden" name="paymentToken" value="">
+        <button type="button" id="submitPayment">Submit Payment</button>
+    </div>
+</form>
