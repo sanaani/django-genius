@@ -1,6 +1,31 @@
 <script type="text/javascript" src="https://ecommerce.merchantware.net/v1/CayanCheckoutPlus.js"></script>
+<script type="text/javascript">
+    CayanCheckoutPlus.setWebApiKey("{{ CAYAN_WEB_API_KEY }}");
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('submitPayment').addEventListener('click', function () {
+            // prevent double click
+            this.setAttribute('disabled', 'disabled');
+            CayanCheckoutPlus.createPaymentToken({
+                success: function (tokenResponse) {
+                    // Populate a hidden field with the single-use token
+                    document.getElementById("paymentToken").value = tokenResponse.token;
+
+                    // Submit the form
+                    document.getElementById("paymentForm").submit();
+                },
+                error: function (errors) {
+                    // TODO: handle error messages
+                    console.table(errors);
+                }
+            });
+
+        });
+    });
+</script>
 
 <form method="post" id="paymentForm">
+    {% csrf_token %}
     <div>
         <span id="error_message"></span>
     </div>
@@ -25,3 +50,4 @@
         <button type="button" id="submitPayment">Submit Payment</button>
     </div>
 </form>
+

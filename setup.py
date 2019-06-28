@@ -15,6 +15,7 @@ setup(
     install_requires=[
         'Django>=2.2.2',
         'requests>=2.22',
+        'zeep>=3.4.0'
     ],
     classifiers=[
         "Framework :: Django",
