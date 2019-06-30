@@ -4,7 +4,12 @@ MerchantWare SOAP API
 """
 
 
-class MerchantWareTransaction(object):
+class Profile:
+    def __init__(self):
+        pass
+
+
+class MerchantWareTransaction:
     def authorize(self, *args, **kwargs):
         raise NotImplementedError
 
