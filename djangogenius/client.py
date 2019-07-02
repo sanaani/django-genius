@@ -31,18 +31,3 @@ class GeniusSOAPClient:
             self.creds.merchant_site_id,
             self.creds.merchant_key
         )
-
-    # def create_transaction(self, **data: dict):
-    #     payment_data = self.get_data_type('ns0:PaymentData')(**{
-    #         'Source': data['Source'],
-    #         'VaultToken': data['VaultToken']
-    #     })
-    #
-    #     sale_data = self.get_data_type('ns0:SaleRequest')(**{
-    #         'Amount': str(data['Amount']),
-    #         'InvoiceNumber': data['InvoiceNumber']
-    #     })
-    #
-    #     with self.client.settings(strict=False):
-    #         sale = self.client.service.Sale(self.merchant_data, payment_data, sale_data)
-    #     return sale

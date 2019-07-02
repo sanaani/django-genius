@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.test import TestCase, override_settings
 
 from djangogenius.client import GeniusCredentials, GeniusSOAPClient
@@ -31,13 +29,3 @@ class SOAPClientTestCase(TestCase):
         credit_client = GeniusSOAPClient(GeniusCredentials())
         merchant_data = credit_client.merchant_data
         self.assertEqual('TEST-MERCHANT', merchant_data.MerchantName)
-
-        # data = dict(
-        #     Amount=1.01,
-        #     SoftwareName="Test Software",
-        #     InvoiceNumber="10",
-        #     Source='Vault',
-        #     VaultToken='fake-token',
-        #
-        # )
-        # transaction = credit_client.create_transaction(**data)
