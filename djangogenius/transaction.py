@@ -6,13 +6,13 @@ from djangogenius.client import GeniusSOAPClient
 from djangogenius.ds import (
     AuthorizationRequest,
     CaptureRequest,
-    CardData,
     PaymentData,
-    SaleData,
     TransactionResponse,
     VaultBoardingResponse,
     VaultTokenResponse45,
-)
+    VaultPaymentData,
+    SaleRequest,
+    KeyedPaymentData)
 
 
 class MerchantWareTransaction:
@@ -26,7 +26,7 @@ class MerchantWareTransaction:
 
 
 class Authorize(MerchantWareTransaction):
-    def process(self, payment_data: CardData, request_data: AuthorizationRequest):
+    def process(self, payment_data: VaultPaymentData, request_data: AuthorizationRequest):
         payment_data = self.client.get_data_type("ns0:PaymentData")(**payment_data.__dict__)
         request_data = self.client.get_data_type("ns0:AuthorizationRequest")(**request_data.__dict__)
 
@@ -35,7 +35,7 @@ class Authorize(MerchantWareTransaction):
 
 
 class Capture(MerchantWareTransaction):
-    def process(self, payment_data: CardData, request_data: CaptureRequest):
+    def process(self, payment_data: VaultPaymentData, request_data: CaptureRequest):
         payment_data = self.client.get_data_type("ns0:PaymentData")(**payment_data.__dict__)
         request_data = self.client.get_data_type("ns0:CaptureRequest")(**request_data.__dict__)
 
@@ -44,7 +44,7 @@ class Capture(MerchantWareTransaction):
 
 
 class Sale(MerchantWareTransaction):
-    def process(self, payment_data: PaymentData, sale_data: SaleData):
+    def process(self, payment_data: PaymentData, sale_data: SaleRequest):
         payment_data = self.client.get_data_type("ns0:PaymentData")(**payment_data.__dict__)
         sale_data = self.client.get_data_type("ns0:SaleRequest")(**sale_data.__dict__)
 
@@ -53,18 +53,9 @@ class Sale(MerchantWareTransaction):
 
 
 class BoardCard(MerchantWareTransaction):
-    def process(self, card_data: CardData):
-        payment = self.client.get_data_type("ns0:PaymentData")(
-            Source=card_data.source,
-            CardNumber=card_data.card_number,
-            ExpirationDate=card_data.expiration_date,
-            CardHolder=card_data.card_holder,
-            CardVerificationValue=card_data.card_verification_number,
-            AvsStreetAddress=card_data.street,
-            AvsZipCode=card_data.zip_code,
-        )
-
-        boarding_request = self.client.get_data_type("ns0:BoardingRequest")()
+    def process(self, card_data: KeyedPaymentData):
+        payment = self.client.get_data_type("ns0:PaymentData")(card_data)
+        boarding_request = self.client.get_data_type("ns0:BoardingRequest")({})
         response = self.service.BoardCard(self.client.merchant_credentials, payment, boarding_request)
 
         return VaultBoardingResponse(response)

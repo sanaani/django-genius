@@ -1,37 +1,33 @@
 class PaymentData:
-    def __init__(self, token=None):
-        self.token = token
-
-    @property
-    def source(self):
-        return "Vault"
-
-
-class CardData(PaymentData):
-    """Payment Data needed to Board a new Credit Card"""
-
-    def __init__(self, card_number: int, expiration_date: int, card_holder: str, verification_number: int, **kwargs):
-        super().__init__(token=kwargs.get("token"))
-        self.card_number = card_number
-        self.expiration_date = expiration_date
-        self.card_holder = card_holder
-        self.card_verification_number = verification_number
-        self.street = kwargs.get("street")
-        self.zip_code = kwargs.get("zip_code")
-
-    @property
-    def source(self):
-        return "Keyed"
+    Source: str = "Vault"
 
     def __repr__(self):
-        return str(self.__dict__)
+        return f"{self.__class__.__name__}: {str(self.__dict__)}"
 
 
-class SaleData:
-    def __init__(self, amount: float, invoice_number: str):
-        self.amount = amount
-        self.invoice_number = invoice_number
+class VaultPaymentData(PaymentData):
+    def __init__(self, token: str = ""):
+        self.VaultToken = token
 
-    @property
-    def normalized_amount(self):
-        return str(self.amount)
+
+class KeyedPaymentData(PaymentData):
+    Source = "Keyed"
+
+    def __init__(
+        self,
+        *,
+        card_number: str,
+        expiration_date: str,
+        card_holder: str,
+        verification_number: str,
+        street: str,
+        zip_code: str,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.CardNumber = card_number
+        self.ExpirationDate = expiration_date
+        self.CardHolder = card_holder
+        self.CardVerificationValue = verification_number
+        self.AvsStreetAddress = street
+        self.AvsZipCode = zip_code

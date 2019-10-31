@@ -2,20 +2,28 @@ from unittest.mock import MagicMock
 
 from django.test import TestCase
 
-from djangogenius.transaction import Sale, PaymentData, SaleData, CardData, BoardCard, FindBoardedCard
+from djangogenius.transaction import Sale, BoardCard, FindBoardedCard
+from djangogenius.ds import VaultPaymentData, KeyedPaymentData, SaleRequest
 from tests.utils import build_client
 
 
 class CreditCardTestCase(TestCase):
-    VALID_CARD_NUMBER = 4012000033330026
+    VALID_CARD_NUMBER = "4012000033330026"
 
     def setUp(self):
         self.client = build_client()
 
     def test_board_card(self):
         service = self.client.client.service
-        card_data = CardData(self.VALID_CARD_NUMBER, 1220, "John Doe", 123, street="5th ave", zip_code="10153")
-        self.assertEqual("Keyed", card_data.source)
+        card_data = KeyedPaymentData(
+            card_number=self.VALID_CARD_NUMBER,
+            expiration_date="1220",
+            card_holder="John Doe",
+            verification_number="123",
+            street="5th ave",
+            zip_code="10153",
+        )
+        self.assertEqual("Keyed", card_data.Source)
 
         board_card = BoardCard(self.client)
 
@@ -37,8 +45,17 @@ class CreditCardTestCase(TestCase):
         client = build_client()
         sale = Sale(client)
 
-        payment_data = PaymentData(token="1")
-        sale_data = SaleData(100, "1")
+        payment_data = VaultPaymentData()
+        sale_data = SaleRequest(
+            tax_amount="0.00",
+            customer_code="1",
+            purchase_order_number="1",
+            amount=100,
+            invoice_number=1,
+            register_number=1,
+            merchant_transaction_id=1,
+            card_acceptor_terminal_id=1,
+        )
 
         client.client.service.Sale = MagicMock(name="MockedSale")
         sale.process(payment_data, sale_data)
