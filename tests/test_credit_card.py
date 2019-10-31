@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 from django.test import TestCase
 
-from djangogenius.transaction import Sale, BoardCard, FindBoardedCard
-from djangogenius.ds import VaultPaymentData, KeyedPaymentData, SaleRequest
+from djangogenius.transaction import Sale, BoardCard, FindBoardedCard, UpdateBoardedCard, Authorize, Capture
+from djangogenius.ds import VaultPaymentData, KeyedPaymentData, SaleRequest, AuthorizationRequest, CaptureRequest
 from tests.utils import build_client
 
 
@@ -15,6 +15,8 @@ class CreditCardTestCase(TestCase):
 
     def test_board_card(self):
         service = self.client.client.service
+        service.BoardCard = MagicMock(name="MockedBoardCard")
+
         card_data = KeyedPaymentData(
             card_number=self.VALID_CARD_NUMBER,
             expiration_date="1220",
@@ -27,23 +29,29 @@ class CreditCardTestCase(TestCase):
 
         board_card = BoardCard(self.client)
 
-        service.BoardCard = MagicMock(name="MockedBoardCard")
         board_card.process(card_data)
         service.BoardCard.assert_called()
 
     def test_find_boarded_card(self):
         service = self.client.client.service
-        service.FindBoardedCard = MagicMock(name="MockedBoardCard")
+        service.FindBoardedCard = MagicMock(name="MockedFindBoardedCard")
 
         board_card = FindBoardedCard(self.client)
         board_card.process("TEST-TOKEN")
         service.FindBoardedCard.assert_called()
 
+    def test_update_boarded_card(self):
+        service = self.client.client.service
+        service.UpdateBoardedCard = MagicMock(name="MockedUpdateBoardedCard")
+
+        board_card = UpdateBoardedCard(self.client)
+        board_card.process("TEST-TOKEN")
+        service.UpdateBoardedCard.assert_called()
+
     def test_sale(self):
         """Test Sale method of MerchantWare API"""
 
-        client = build_client()
-        sale = Sale(client)
+        sale = Sale(self.client)
 
         payment_data = VaultPaymentData()
         sale_data = SaleRequest(
@@ -57,6 +65,34 @@ class CreditCardTestCase(TestCase):
             card_acceptor_terminal_id=1,
         )
 
-        client.client.service.Sale = MagicMock(name="MockedSale")
+        self.client.client.service.Sale = MagicMock(name="MockedSale")
         sale.process(payment_data, sale_data)
-        client.client.service.Sale.assert_called()
+        self.client.client.service.Sale.assert_called()
+
+    def test_authorize(self):
+        """Test Authorize method of MerchantWare API"""
+
+        authorize = Authorize(self.client)
+        self.client.client.service.Authorize = MagicMock(name="MockedAuthorize")
+
+        payment_data = VaultPaymentData("TEST-TOKEN")
+        authorization_request = AuthorizationRequest(
+            amount="100", invoice_number="1", register_number=1, merchant_transaction_id=1, card_acceptor_terminal_id=1
+        )
+
+        authorize.process(payment_data, authorization_request)
+        self.client.client.service.Authorize.assert_called()
+
+    def test_capture(self):
+        """Test Capture method of MerchantWare API"""
+
+        capture = Capture(self.client)
+        self.client.client.service.Capture = MagicMock(name="MockedCapture")
+
+        payment_data = VaultPaymentData("TEST-TOKEN")
+        capture_request = CaptureRequest(
+            amount="100", invoice_number="1", register_number=1, merchant_transaction_id=1, card_acceptor_terminal_id=1
+        )
+
+        capture.process(payment_data, capture_request)
+        self.client.client.service.Capture.assert_called()

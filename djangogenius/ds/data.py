@@ -1,3 +1,10 @@
+class MerchantCredentials:
+    def __init__(self, merchant_name: str, merchant_site_id: str, merchant_key: str):
+        self.MerchantName = merchant_name
+        self.MerchantSiteId = merchant_site_id
+        self.MerchantKey = merchant_key
+
+
 class PaymentData:
     Source: str = "Vault"
 
