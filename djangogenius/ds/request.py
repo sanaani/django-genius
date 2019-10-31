@@ -74,7 +74,3 @@ class UpdateBoardedCardRequest(VaultTokenRequest):
     def __init__(self, token: str, expiration_date: str):
         super().__init__(token)
         self.ExpirationDate = expiration_date
-
-
-class BoardingRequest:
-    pass
